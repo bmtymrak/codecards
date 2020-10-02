@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Game, Card, Count
 
-# Register your models here.
+admin.site.register(Game)
+admin.site.register(Card)
+admin.site.register(Count)
