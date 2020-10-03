@@ -4,7 +4,6 @@ import App from './App.js'
 
 
 const cards = JSON.parse(document.getElementById("cards").textContent)
-console.log(cards)
 
 function countCards(cards) {
     return (cards.reduce((teamRemaining, card) => {

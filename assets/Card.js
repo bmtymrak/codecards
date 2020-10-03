@@ -27,10 +27,6 @@ function Card(props) {
 
     const showCardColor = event => {
         if (!props.card.clicked && !props.callerView && props.canClick) {
-            // setBgColor(props.colors[props.card.team])
-            // setTextColor('white')
-            // // props.onTouch(props.card)
-            // console.log(props.card)
             props.socket.send(JSON.stringify({
                 'event_type': 'card click',
                 'card': props.card

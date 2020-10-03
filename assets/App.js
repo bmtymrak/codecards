@@ -15,7 +15,6 @@ function App({ setup, socket }) {
         const data = JSON.parse(e.data)
         if (data["event_type"] == "card click") {
             let card = data['card']
-            console.log(card)
             onTouch(card)
         } else if (data["event_type"] == "end turn") {
             handleCanClick()
