@@ -27,7 +27,7 @@ const setup = [cards, firstTeam]
 
 const gameID = JSON.parse(document.getElementById("game").textContent)
 
-const ws_protocol = 'ws://'
+let ws_protocol = 'ws://'
 if (window.location.protocol === "https:") {
     ws_protocol = 'wss://'
 }
