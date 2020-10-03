@@ -27,11 +27,11 @@ const setup = [cards, firstTeam]
 
 const gameID = JSON.parse(document.getElementById("game").textContent)
 
+const ws_protocol = 'ws://'
 if (window.location.protocol === "https:") {
-    const ws_protocol = 'wss://'
-} else {
-    const ws_protocol = 'ws://'
+    ws_protocol = 'wss://'
 }
+
 const socket = new WebSocket(ws_protocol + window.location.host + '/ws/games' + gameID)
 
 ReactDOM.render(
