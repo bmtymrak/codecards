@@ -1,3 +1,4 @@
 node_modules
+staticfiles
 .env
 db.sqlite3
