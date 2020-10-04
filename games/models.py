@@ -230,7 +230,7 @@ class Game(models.Model):
         # Randomly select words from list
         words = []
         while len(words) < 25:
-            word = word_list[random.randint(0, len(word_list))]
+            word = word_list[random.randint(0, len(word_list) - 1)]
             if word not in words:
                 words.append(word)
 
@@ -252,4 +252,7 @@ class Card(models.Model):
 
 class Count(models.Model):
     games_played = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.games_played
 

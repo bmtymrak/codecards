@@ -8,9 +8,12 @@
     <link rel="stylesheet" href="{% static 'index.css'%}">
 </head>
 <body>
+    <div class="main-container">
     {{ cards|json_script:"cards" }}
     {{request.path|json_script:"game"}}
     <div id="root"></div>
+    <p>Share this link to play with others: {{request.build_absolute_uri}}</p>
+</div>
     <script src="{% static 'index-bundle.js' %}"></script>
 </body>
 </html>

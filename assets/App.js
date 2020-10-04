@@ -97,7 +97,7 @@ function App({ setup, socket }) {
 
     return (
         <div className="container">
-            <h1>{gameActive ? `${activeTeam}'s turn` : `${activeTeam} wins!`}</h1>
+            <h1>{gameActive ? `${activeTeam.slice(0, 1).toUpperCase() + activeTeam.slice(1)}'s turn` : `${activeTeam.slice(0, 1).toUpperCase() + activeTeam.slice(1)} wins!`}</h1>
             <div className="score-container">
                 <div className="score blue">{remainingCards.blue ? remainingCards.blue : 0}</div>
                 <button onClick={endTurn}>
