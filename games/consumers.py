@@ -1,7 +1,7 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from .models import Game
+from .models import Game, Card
 
 
 class GameConsumer(WebsocketConsumer):
@@ -42,6 +42,9 @@ class GameConsumer(WebsocketConsumer):
 
     def card_click(self, event):
         card = event["card"]
+        clicked_card = Card.objects.get(word=card["word"])
+        clicked_card.clicked = True
+        clicked_card.save()
 
         self.send(text_data=json.dumps({"event_type": "card click", "card": card}))
 

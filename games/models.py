@@ -13,7 +13,7 @@ class Game(models.Model):
             for card in cards:
                 new_card = Card(game=self, word=card["word"], team=card["team"])
                 new_card.save()
-            game_tracker = Count.objects.get(pk=1)
+            game_tracker = Count.objects.first()
             game_tracker.games_played += 1
             game_tracker.save()
         else:
@@ -253,5 +253,5 @@ class Count(models.Model):
     games_played = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.games_played
+        return str(self.games_played)
 
