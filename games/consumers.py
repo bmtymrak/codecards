@@ -1,6 +1,7 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from .models import Game
 
 
 class GameConsumer(WebsocketConsumer):
@@ -35,6 +36,10 @@ class GameConsumer(WebsocketConsumer):
                 self.game_group_name, {"type": event_type}
             )
 
+        if text_data_json["event_type"] == "new game":
+            game_id = text_data_json["game_id"].lstrip(("/")).rstrip("/")
+            self.create_new_game(game_id)
+
     def card_click(self, event):
         card = event["card"]
 
@@ -43,3 +48,21 @@ class GameConsumer(WebsocketConsumer):
     def end_turn(self, event):
         self.send(text_data=json.dumps({"event_type": "end turn"}))
 
+    def create_new_game(self, game_id):
+        Game.objects.filter(id=game_id).delete()
+        new_game = Game(id=game_id)
+        new_game.save()
+
+        cards = [
+            {"word": card.word, "team": card.team, "clicked": card.clicked}
+            for card in new_game.card_set.all()
+        ]
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.game_group_name, {"type": "new_game", "cards": cards}
+        )
+
+    def new_game(self, data):
+        self.send(
+            text_data=json.dumps({"event_type": data["type"], "cards": data["cards"]})
+        )

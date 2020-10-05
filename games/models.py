@@ -11,7 +11,6 @@ class Game(models.Model):
             super().save(*args, **kwargs)
             cards = self.build_board()
             for card in cards:
-                print(card)
                 new_card = Card(game=self, word=card["word"], team=card["team"])
                 new_card.save()
             game_tracker = Count.objects.get(pk=1)
@@ -223,8 +222,8 @@ class Game(models.Model):
         # Shuffle list of teams
         teams_remaining = len(teams)
         while teams_remaining:
-            index = random.randint(0, teams_remaining)
             teams_remaining -= 1
+            index = random.randint(0, teams_remaining)
             teams[index], teams[teams_remaining] = teams[teams_remaining], teams[index]
 
         # Randomly select words from list

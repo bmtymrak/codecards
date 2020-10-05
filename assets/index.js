@@ -35,7 +35,7 @@ const socket = new WebSocket(ws_protocol + window.location.host + '/ws/games' + 
 
 ReactDOM.render(
     <React.StrictMode>
-        <App setup={setup} socket={socket} />
+        <App setup={setup} socket={socket} gameID={gameID} />
     </React.StrictMode>,
     document.getElementById('root')
 );

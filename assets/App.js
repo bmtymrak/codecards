@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import Card from './Card.js';
-// import './App.css';
 
-function App({ setup, socket }) {
+function App({ setup, socket, gameID }) {
 
     const [activeTeam, setActiveTeam] = useState(setup[1])
     const [cards, setCards] = useState(setup[0])
@@ -13,11 +12,13 @@ function App({ setup, socket }) {
 
     socket.onmessage = (e) => {
         const data = JSON.parse(e.data)
-        if (data["event_type"] == "card click") {
+        if (data["event_type"] === "card click") {
             let card = data['card']
             onTouch(card)
-        } else if (data["event_type"] == "end turn") {
+        } else if (data["event_type"] === "end turn") {
             handleCanClick()
+        } else if (data["event_type"] === "new_game") {
+            startNewGame(data["cards"])
         }
 
     }
@@ -85,14 +86,21 @@ function App({ setup, socket }) {
         }
     }
 
-    function newGame() {
-        // let [cards, firstTeam] = createBoard()
-        // setCards(cards)
-        // setActiveTeam(firstTeam)
-        // setRemainingCards(updateScore(cards))
-        // setCanClick(true)
-        // setGameActive(true)
-        // setCallerView(false)
+    function handleNewGame() {
+        socket.send(JSON.stringify({
+            'event_type': 'new game',
+            'game_id': gameID,
+        }))
+    }
+
+    function startNewGame(newCards) {
+        setCards(newCards)
+        const newScore = updateScore(newCards)
+        setRemainingCards(newScore)
+        setActiveTeam(newScore["red"] > newScore["blue"] ? "red" : "blue")
+        setCanClick(true)
+        setGameActive(true)
+        setCallerView(false)
     }
 
     return (
@@ -109,7 +117,7 @@ function App({ setup, socket }) {
                 <button onClick={handleViewChange}>
                     {callerView ? 'Switch to Player View' : 'Switch to Caller View'}
                 </button>
-                <button onClick={newGame}>
+                <button onClick={handleNewGame}>
                     New Game
           </button>
             </div>
