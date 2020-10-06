@@ -24,12 +24,10 @@ class GameConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         if text_data_json["event_type"] == "card click":
             card = text_data_json["card"]
-            game_id = text_data_json["game_id"]
             event_type = "card_click"
 
             async_to_sync(self.channel_layer.group_send)(
-                self.game_group_name,
-                {"type": event_type, "card": card, "game_id": game_id},
+                self.game_group_name, {"type": event_type, "card": card},
             )
 
         elif text_data_json["event_type"] == "end turn":
@@ -44,16 +42,22 @@ class GameConsumer(WebsocketConsumer):
 
     def card_click(self, event):
         card = event["card"]
-        game_id = event["game_id"]
-        clicked_card = Card.objects.get(word=card["word"], game__id=game_id)
-        if not clicked_card.clicked:
-            clicked_card.clicked = True
-            clicked_card.save()
+        clicked_card = Card.objects.get(word=card["word"], game__id=card["game"])
+        clicked_card.set_true()
 
         self.send(text_data=json.dumps({"event_type": "card click", "card": card}))
 
     def end_turn(self, event):
-        self.send(text_data=json.dumps({"event_type": "end turn"}))
+        current_game = Game.objects.get(id=self.scope["url_route"]["kwargs"]["game_id"])
+        current_game.active_team = (
+            "blue" if current_game.active_team == "red" else "red"
+        )
+        current_game.save()
+        self.send(
+            text_data=json.dumps(
+                {"event_type": "end turn", "active_team": current_game.active_team}
+            )
+        )
 
     def create_new_game(self, game_id):
         Game.objects.filter(id=game_id).delete()
@@ -65,7 +69,7 @@ class GameConsumer(WebsocketConsumer):
                 "word": card.word,
                 "team": card.team,
                 "clicked": card.clicked,
-                "game": game_id,
+                "game": str(card.game.id),
             }
             for card in new_game.card_set.all()
         ]

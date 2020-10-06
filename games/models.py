@@ -5,11 +5,13 @@ import random
 
 class Game(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    active_team = models.CharField(max_length=10, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.card_set.all():
+            cards, active_team = self.build_board()
+            self.active_team = active_team
             super().save(*args, **kwargs)
-            cards = self.build_board()
             for card in cards:
                 new_card = Card(game=self, word=card["word"], team=card["team"])
                 new_card.save()
@@ -236,7 +238,7 @@ class Game(models.Model):
         # Assign team to card
         cards = [{"word": word, "team": team} for word, team in zip(words, teams)]
 
-        return cards
+        return cards, team1
 
 
 class Card(models.Model):
@@ -244,6 +246,11 @@ class Card(models.Model):
     word = models.CharField(max_length=75, blank=False)
     team = models.CharField(max_length=20, blank=False)
     clicked = models.BooleanField(default=False)
+
+    def set_true(self):
+        if not self.clicked:
+            self.clicked = True
+            self.save()
 
     def __str__(self):
         return self.word

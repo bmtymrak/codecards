@@ -2,9 +2,6 @@ from django.shortcuts import render
 from django.views.generic import View, TemplateView
 from django.http import HttpResponseRedirect
 from .models import Game
-import string
-import random
-import json
 
 
 class HomePageView(View):
@@ -32,8 +29,8 @@ class GameView(TemplateView):
                         "game": card.game.id,
                     }
                     for card in Game.objects.get(id=self.kwargs["id"]).card_set.all()
-                ]
+                ],
+                "active_team": Game.objects.get(id=self.kwargs["id"]).active_team,
             }
         )
-        print(kwargs)
         return kwargs

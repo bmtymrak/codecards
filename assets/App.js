@@ -16,9 +16,9 @@ function App({ setup, socket, gameID }) {
             let card = data['card']
             onCardClick(card)
         } else if (data["event_type"] === "end turn") {
-            handleCanClick()
+            handleChangeTeam(data['active_team'])
         } else if (data["event_type"] === "new_game") {
-            startNewGame(data["cards"])
+            startNewGame(data['cards'])
         }
 
     }
@@ -42,7 +42,6 @@ function App({ setup, socket, gameID }) {
             socket.send(JSON.stringify({
                 'event_type': 'card click',
                 'card': card,
-                'game_id': card.game
             }))
         }
     }
@@ -90,9 +89,9 @@ function App({ setup, socket, gameID }) {
     }
 
 
-    function handleCanClick() {
+    function handleChangeTeam(newActiveTeam) {
         if (gameActive) {
-            const newActiveTeam = activeTeam === 'blue' ? 'red' : 'blue'
+            // const newActiveTeam = activeTeam === 'blue' ? 'red' : 'blue'
             setActiveTeam(newActiveTeam)
             setCanClick(true)
         }

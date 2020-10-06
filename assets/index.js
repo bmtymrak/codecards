@@ -4,27 +4,10 @@ import App from './App.js'
 
 
 const cards = JSON.parse(document.getElementById("cards").textContent)
-
-function countCards(cards) {
-    return (cards.reduce((teamRemaining, card) => {
-        if (card.clicked === false) {
-            if (card.team in teamRemaining) {
-                teamRemaining[card.team]++
-            } else {
-                teamRemaining[card.team] = 1
-            }
-        }
-        return teamRemaining
-    }, {})
-    )
-}
-
-
-const initialCards = countCards(cards)
-const firstTeam = initialCards["red"] > initialCards["blue"] ? "red" : "blue"
-const setup = [cards, firstTeam]
-
+const firstTeam = JSON.parse(document.getElementById("active_team").textContent)
 const gameID = JSON.parse(document.getElementById("game").textContent)
+
+const setup = [cards, firstTeam]
 
 let ws_protocol = 'ws://'
 if (window.location.protocol === "https:") {
