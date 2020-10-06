@@ -24,27 +24,31 @@ class GameConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         if text_data_json["event_type"] == "card click":
             card = text_data_json["card"]
+            game_id = text_data_json["game_id"]
             event_type = "card_click"
 
             async_to_sync(self.channel_layer.group_send)(
-                self.game_group_name, {"type": event_type, "card": card}
+                self.game_group_name,
+                {"type": event_type, "card": card, "game_id": game_id},
             )
 
-        if text_data_json["event_type"] == "end turn":
+        elif text_data_json["event_type"] == "end turn":
             event_type = "end_turn"
             async_to_sync(self.channel_layer.group_send)(
                 self.game_group_name, {"type": event_type}
             )
 
-        if text_data_json["event_type"] == "new game":
+        elif text_data_json["event_type"] == "new game":
             game_id = text_data_json["game_id"].lstrip(("/")).rstrip("/")
             self.create_new_game(game_id)
 
     def card_click(self, event):
         card = event["card"]
-        clicked_card = Card.objects.get(word=card["word"])
-        clicked_card.clicked = True
-        clicked_card.save()
+        game_id = event["game_id"]
+        clicked_card = Card.objects.get(word=card["word"], game__id=game_id)
+        if not clicked_card.clicked:
+            clicked_card.clicked = True
+            clicked_card.save()
 
         self.send(text_data=json.dumps({"event_type": "card click", "card": card}))
 
@@ -57,7 +61,12 @@ class GameConsumer(WebsocketConsumer):
         new_game.save()
 
         cards = [
-            {"word": card.word, "team": card.team, "clicked": card.clicked}
+            {
+                "word": card.word,
+                "team": card.team,
+                "clicked": card.clicked,
+                "game": game_id,
+            }
             for card in new_game.card_set.all()
         ]
 

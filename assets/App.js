@@ -14,7 +14,7 @@ function App({ setup, socket, gameID }) {
         const data = JSON.parse(e.data)
         if (data["event_type"] === "card click") {
             let card = data['card']
-            onTouch(card)
+            onCardClick(card)
         } else if (data["event_type"] === "end turn") {
             handleCanClick()
         } else if (data["event_type"] === "new_game") {
@@ -37,7 +37,18 @@ function App({ setup, socket, gameID }) {
         )
     }
 
-    function onTouch(card) {
+    function handleCardClick(card) {
+        if (!card.clicked && !callerView && canClick) {
+            socket.send(JSON.stringify({
+                'event_type': 'card click',
+                'card': card,
+                'game_id': card.game
+            }))
+        }
+    }
+
+
+    function onCardClick(card) {
         const newCards = [...cards]
         const index = newCards.findIndex(compCard => compCard.word == card.word)
         newCards[index].clicked = true
@@ -61,13 +72,6 @@ function App({ setup, socket, gameID }) {
 
     }
 
-    function handleEndOfGame() {
-        setGameActive(false)
-        const newActiveTeam = activeTeam === 'blue' ? 'red' : 'blue'
-        setActiveTeam(newActiveTeam)
-        setCallerView(true)
-    }
-
     function handleViewChange() {
         setCallerView(prevCallerView => !callerView)
     }
@@ -77,6 +81,14 @@ function App({ setup, socket, gameID }) {
             'event_type': 'end turn'
         }))
     }
+
+    function handleEndOfGame() {
+        setGameActive(false)
+        const newActiveTeam = activeTeam === 'blue' ? 'red' : 'blue'
+        setActiveTeam(newActiveTeam)
+        setCallerView(true)
+    }
+
 
     function handleCanClick() {
         if (gameActive) {
@@ -127,10 +139,11 @@ function App({ setup, socket, gameID }) {
                         key={card.word}
                         card={card}
                         activeTeam={activeTeam}
-                        onTouch={onTouch}
+                        handleCardClick={handleCardClick}
                         callerView={callerView}
                         canClick={canClick}
                         socket={socket}
+                        textColor={card.clicked === true ? 'white' : 'black'}
                         colors={{ 'red': '#ea4f4f', 'blue': '#338bea', 'assassin': 'gray', 'none': '#979777' }}
                         colorsCaller={{ 'red': '#eebaba', 'blue': 'rgb(130, 188, 244)', 'assassin': '#c4c4c4' }}
                     />))}

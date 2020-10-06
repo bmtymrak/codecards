@@ -22,13 +22,18 @@ class GameView(TemplateView):
 
     def get_context_data(self, **kwargs):
         kwargs.update({"game": self.kwargs["id"]})
-        # print(list(Game.objects.get(id=self.kwargs["id"]).card_set.all()))
         kwargs.update(
             {
                 "cards": [
-                    {"word": card.word, "team": card.team, "clicked": card.clicked}
+                    {
+                        "word": card.word,
+                        "team": card.team,
+                        "clicked": card.clicked,
+                        "game": card.game.id,
+                    }
                     for card in Game.objects.get(id=self.kwargs["id"]).card_set.all()
                 ]
             }
         )
+        print(kwargs)
         return kwargs

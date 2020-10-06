@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 function Card(props) {
 
     const [bgColor, setBgColor] = useState('beige')
-    const [textColor, setTextColor] = useState('black')
+    // const [textColor, setTextColor] = useState('black')
 
     let style = {
         backgroundColor: bgColor,
-        color: textColor,
+        color: props.textColor,
     }
 
     if (props.callerView) {
@@ -18,7 +18,7 @@ function Card(props) {
     } else {
         if (props.card.clicked & bgColor !== props.colors[props.card.team]) {
             setBgColor(props.colors[props.card.team])
-            setTextColor('white')
+            // setTextColor('white')
         }
         else if (!props.card.clicked & bgColor !== 'beige') {
             setBgColor('beige')
@@ -26,12 +26,13 @@ function Card(props) {
     }
 
     const showCardColor = event => {
-        if (!props.card.clicked && !props.callerView && props.canClick) {
-            props.socket.send(JSON.stringify({
-                'event_type': 'card click',
-                'card': props.card
-            }))
-        }
+        props.handleCardClick(props.card)
+        // if (!props.card.clicked && !props.callerView && props.canClick) {
+        //     props.socket.send(JSON.stringify({
+        //         'event_type': 'card click',
+        //         'card': props.card
+        //     }))
+        // }
     }
 
     return (
