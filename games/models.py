@@ -255,6 +255,9 @@ class Card(models.Model):
     def __str__(self):
         return self.word
 
+    class Meta:
+        ordering = ["pk"]
+
 
 class Count(models.Model):
     games_played = models.IntegerField(default=0)
