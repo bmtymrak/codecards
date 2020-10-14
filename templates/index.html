@@ -9,13 +9,18 @@
 </head>
 <body>
     <div class="main-container">
-        <h1 class="main-title">Code Cards</h1>
-        <p>An unofficial version of Codenames</p>
+        <div class="content">
+            <h1 class="main-title">Code Cards</h1>
+            <p>An unofficial version of Codenames</p>
 
-        <form method="POST">
-            {% csrf_token %}
-            <button class="blended-color" type="submit">Start a New Game</button>
-        </form>
+            <form method="POST">
+                {% csrf_token %}
+                <button class="blended-color" type="submit">Start a New Game</button>
+            </form>
+        </div>
+        <div id="footer">
+            <p>Created by <a href="https://www.brennantymrak.com">Brennan Tymrak</a> - Problems? <a href = "mailto: brennan@brennantymrak.com">Email me</a> - See the code <a href="https://github.com/bmtymrak/codecards">on GitHub</a></p>
+        </div>
     </div>
 </body>
 </html>

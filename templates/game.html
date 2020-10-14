@@ -9,12 +9,18 @@
 </head>
 <body>
     <div class="main-container">
-    {{ cards|json_script:"cards" }}
+    <div class="content">
+        {{ cards|json_script:"cards" }}
     {{ request.path|json_script:"game" }}
     {{ active_team|json_script:"active_team" }}
     <div id="root"></div>
     <p>Share this link to play with others: {{request.build_absolute_uri}}</p>
-</div>
+    </div>
+    
+    <div id="footer">
+        <p>Created by <a href="https://www.brennantymrak.com">Brennan Tymrak</a> - Problems? <a href = "mailto: brennan@brennantymrak.com">Email me</a> - See the code <a href="https://github.com/bmtymrak/codecards">on GitHub</a></p>
+    </div>
+    </div>
     <script src="{% static 'index-bundle.js' %}"></script>
 </body>
 </html>
